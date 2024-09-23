@@ -25,6 +25,16 @@ sql_clientes = """
     );
 """
 
+insere_cliente  = """
+    INSERT INTO Cliente VALUES 
+    ('12345678901', 'Carlos', 'Silva', '1234567890', 'Rua das Flores', '123', 'Centro'),
+    ('98765432109', 'Ana', 'Souza', '0987654321', 'Avenida Brasil', '456', 'Jardim América'),
+    ('56789012345', 'Marcos', 'Pereira', '1122334455', 'Rua dos Pinheiros', '789', 'Vila Nova'),
+    ('23456789012', 'Luana', 'Oliveira', '2345678901', 'Rua das Laranjeiras', '321', 'Bela Vista'),
+    ('34567890123', 'Ricardo', 'Martins', '3456789012', 'Avenida das Palmeiras', '654', 'Jardim São Paulo'),
+    ('45678901234', 'Fernanda', 'Alves', '4567890123', 'Praça da Liberdade', '987', 'Centro Histórico'),
+    ('56789012346', 'Tiago', 'Gomes', '5678901234', 'Rua do Comércio', '852', 'Vila Esperança');
+    """
 sql_vendas = """
     CREATE TABLE IF NOT EXISTS Venda (
     ID_transacao INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,12 +63,14 @@ def make_db():
         
     except con.DatabaseError as e:
         print(f'Ocorreu um erro: {e}')
-    
+    # finally:
+    #     if Conexao:
+    #         Conexao.close()
             
 def verificar_db():
     
     try:
-        res = curso.execute("SELECT * FROM sqlite_master")
+        res = curso.execute("SELECT name FROM sqlite_master")
         print(res.fetchall())
     except con.DatabaseError as e:
         print(f'Ocorreu um erro: {e}')
