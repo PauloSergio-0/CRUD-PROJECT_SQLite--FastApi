@@ -68,7 +68,7 @@ def verificar_db():
 def insert_vendas (Nota_Fiscal, Id_cliente, Data_compra, Id_Veiculo, Quantidade):
     
     try:
-        curso.execute(f"""INSERT INTO Venda (Nota_Fiscal, ID_Cliente, Data_compra, ID_Veiculo, Quantidade)
+        curso.execute("""INSERT INTO Venda (Nota_Fiscal, ID_Cliente, Data_compra, ID_Veiculo, Quantidade)
                         VALUES (?,?,?,?,?)""", (Nota_Fiscal, Id_cliente, Data_compra, Id_Veiculo, Quantidade))
         Conexao.commit()
     except con.DatabaseError as e:
