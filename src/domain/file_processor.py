@@ -9,6 +9,14 @@ class File_manipulation:
         self.conexao = con.connect(self.file_path)
         self.cursor = self.conexao.cursor()
         
+        
+    def close_db(self):
+        
+        try:
+            self.conexao.close()
+        except con.DatabaseError as e:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=f"Erro ao fechar conexão: {e}")
+            
     def Create_db(self):
         sql_create = """
         CREATE TABLE IF NOT EXISTS Carro (
@@ -23,8 +31,9 @@ class File_manipulation:
         try:
             self.cursor.execute(sql_create)
             self.conexao.commit()
-            
+            self.close_db()
             return {"menssage": "banco criado com sucesso!!!"}
+        
         except con.DatabaseError as e:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail=f"falhas: {str(e)}")
@@ -66,6 +75,7 @@ class File_manipulation:
                     
                     sql_tuple.append(content)
                 self.insert_db(sql_tuple)
+                self.close_db()
                 return {"menssage": sql_tuple}
             except Exception as e:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -83,7 +93,8 @@ class File_manipulation:
             for row in dados:
                 content = dict(id=row[0], Marca = row[1], Modelo = row[2], Preco = row[3], Quantidade = row[4])
                 dados_menssage.append(content)
-            
+                
+            self.close_db()
             return {"menssagen": dados_menssage}
         except con.DatabaseError as e:
             print(f"Erro a acessar banco de dados: {e}")
