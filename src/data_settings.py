@@ -65,6 +65,14 @@ def verificar_db():
     except con.DatabaseError as e:
         print(f'Ocorreu um erro: {e}')
 
+def insert_vendas (Nota_Fiscal, Id_cliente, Data_compra, Id_Veiculo, Quantidade):
+    
+    try:
+        curso.execute(f"""INSERT INTO Venda (Nota_Fiscal, ID_Cliente, Data_compra, ID_Veiculo, Quantidade)
+                        VALUES (?,?,?,?,?)""", (Nota_Fiscal, Id_cliente, Data_compra, Id_Veiculo, Quantidade))
+        Conexao.commit()
+    except con.DatabaseError as e:
+        print(f"Erro: {e}")
 
 def inserir_dados_vendas():
     inserer_vendas = """
@@ -126,12 +134,17 @@ def listar_dados(tabela = 'Cliente'):
             print(row)
     except con.DatabaseError as e:
         print(f'Ocorreu um erro: {e}')
-make_db()
+        
+
+make_db() 
 # verificar_db()
 # inserir_dados_Clientes()
 # inserir_dados_carros()
 # inserir_dados_vendas()
-listar_dados(tabela='Veiculo')
+
+insert_vendas(Nota_Fiscal=123, Id_cliente=2, Data_compra="2024-10-05", Id_Veiculo=3, Quantidade=1)
+listar_dados(tabela='Venda')
+
 global Conexao
 if Conexao:
     Conexao.close()
