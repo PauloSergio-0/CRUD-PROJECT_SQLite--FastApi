@@ -98,3 +98,21 @@ class File_manipulation:
             return {"menssagen": dados_menssage}
         except con.DatabaseError as e:
             print(f"Erro a acessar banco de dados: {e}")
+            
+            
+    async def Filter_table(self, marca_filter:str):
+        sql_filter = """SELECT * FROM Carro WHERE Marca_veiculo = ?"""
+        
+        dado_filter = []
+        try:
+            self.cursor.execute(sql_filter, (marca_filter,))
+            dado = self.cursor.fetchall()
+            
+            for item in dado:
+                content = dict(ID_veiculo = item[0], marca_veiculo = item[1], modelo_veiculo= item[2], preco_veiculo=item[3], qtde_veiculo = item[4])
+                dado_filter.append(content)
+            return {"data": dado_filter}
+        except con.DatabaseError as e:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, 
+                                detail = f"Erro: {e}")
+                

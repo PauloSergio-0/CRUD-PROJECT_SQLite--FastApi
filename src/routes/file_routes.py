@@ -13,6 +13,11 @@ async def upload(file: UploadFile = File(...)):
     return await File_manipulation().upload_data(file)
 
 
-@router.post("/db/list_data")
+@router.get("/db/list_data")
 async def list_all_data():
     return await File_manipulation().lista_data()
+
+
+@router.get("/db/filter_data")
+async def filter_all_data(marca_veiculo: str):
+    return await File_manipulation().Filter_table(marca_veiculo)
