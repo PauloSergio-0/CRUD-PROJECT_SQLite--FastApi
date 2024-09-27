@@ -116,3 +116,18 @@ class File_manipulation:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, 
                                 detail = f"Erro: {e}")
                 
+                
+    async def insert_data(self, data: dict):
+        sql_insert_data = """
+        INSERT INTO Carro 
+        (Marca_veiculo, Modelo_carro, Preco_carro, Qtde_carro) 
+        VALUES (?, ?, ?, ?)
+        """
+        try:
+            self.cursor.execute(sql_insert_data, tuple(data.values()))
+            self.conexao.commit()
+            self.close_db()
+            return {"menssagen": "dados inseridos com sucesso"}
+        except Exception as e:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST,
+                                detail=f'erro: {e}')

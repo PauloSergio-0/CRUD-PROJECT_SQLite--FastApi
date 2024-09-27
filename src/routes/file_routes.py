@@ -21,3 +21,8 @@ async def list_all_data():
 @router.get("/db/filter_data")
 async def filter_all_data(marca_veiculo: str):
     return await File_manipulation().Filter_table(marca_veiculo)
+
+@router.get("/db/insert_data")
+async def insert_data(marca_veiculo: str, modelo_veiculo: str, preco_veiculo: float, Qtde_veiculo: int):
+    data_veiculo = dict(Marca = marca_veiculo, Modelo = modelo_veiculo, Preco = preco_veiculo, Qtde = Qtde_veiculo)
+    return await File_manipulation().insert_data(data_veiculo)
