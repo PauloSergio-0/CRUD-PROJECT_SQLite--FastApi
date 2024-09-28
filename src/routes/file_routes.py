@@ -26,3 +26,9 @@ async def filter_all_data(marca_veiculo: str):
 async def insert_data(marca_veiculo: str, modelo_veiculo: str, preco_veiculo: float, Qtde_veiculo: int):
     data_veiculo = dict(Marca = marca_veiculo, Modelo = modelo_veiculo, Preco = preco_veiculo, Qtde = Qtde_veiculo)
     return await File_manipulation().insert_data(data_veiculo)
+
+@router.get("/db/delete_data")
+async def delete(marca_veiculo: str, modelo_veiculo: str):
+
+    data_v= dict(marca= marca_veiculo,modelo = modelo_veiculo)
+    return await File_manipulation().delete_data(data_v)

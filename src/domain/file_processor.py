@@ -131,3 +131,21 @@ class File_manipulation:
         except Exception as e:
             raise HTTPException(status.HTTP_400_BAD_REQUEST,
                                 detail=f'erro: {e}')
+            
+            
+        
+    async def delete_data(self, data: dict):
+        sql_delete = """
+        DELETE FROM Carro 
+        WHERE Marca_veiculo = ? AND Modelo_carro = ?
+        """
+
+
+        try: 
+            self.cursor.execute(sql_delete, tuple(data.values()))
+            self.conexao.commit()
+            self.close_db()
+            return {"menssage": "Deletado com sucesso"}
+        except Exception as e:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                detail=f'erro: {e}')
