@@ -100,12 +100,30 @@ class File_manipulation:
             print(f"Erro a acessar banco de dados: {e}")
             
             
-    async def Filter_table(self, marca_filter:str):
-        sql_filter = """SELECT * FROM Carro WHERE Marca_veiculo = ?"""
+    async def Filter_table(self, data: dict):
+        print(data)
+        sql_filter = """SELECT * FROM Carro"""
+
+        condicoes = []
+
+        if ("marca" in data) and  (data["marca"] is not None):
+            condicoes.append("Marca_veiculo = ?")
+            
+        if ("modelo" in data) and  (data["modelo"] is not None):
+            condicoes.append("Modelo_carro = ?")
+            
+        if ("preco" in data) and (data["preco"] is not None):
+            condicoes.append("Preco_carro <= ?")
         
+        if ("qtde" in data) and (data["qtde"] is not None):
+            condicoes.append("Qtde_carro <= ?")
+            
+        if condicoes:
+            sql_filter += " WHERE "+" AND ".join(condicoes)
+        print(sql_filter)
         dado_filter = []
         try:
-            self.cursor.execute(sql_filter, (marca_filter,))
+            self.cursor.execute(sql_filter, tuple(data.values()))
             dado = self.cursor.fetchall()
             
             for item in dado:
@@ -126,11 +144,12 @@ class File_manipulation:
         try:
             self.cursor.execute(sql_insert_data, tuple(data.values()))
             self.conexao.commit()
-            self.close_db()
             return {"menssagen": "dados inseridos com sucesso"}
         except Exception as e:
             raise HTTPException(status.HTTP_400_BAD_REQUEST,
                                 detail=f'erro: {e}')
+        finally:
+            self.close_db()
             
             
         

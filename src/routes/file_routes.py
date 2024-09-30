@@ -19,16 +19,37 @@ async def list_all_data():
 
 
 @router.get("/db/filter_data")
-async def filter_all_data(marca_veiculo: str):
-    return await File_manipulation().Filter_table(marca_veiculo)
+async def filter_all_data(marca_veiculo: str=None, modelo_veiculo: str = None, preco_veiculo: float= None, qtde_veiculo: int= None):
+    data_filter = {}
 
-@router.get("/db/insert_data")
-async def insert_data(marca_veiculo: str, modelo_veiculo: str, preco_veiculo: float, Qtde_veiculo: int):
-    data_veiculo = dict(Marca = marca_veiculo, Modelo = modelo_veiculo, Preco = preco_veiculo, Qtde = Qtde_veiculo)
+    if marca_veiculo:
+        data_filter["marca"] = marca_veiculo
+
+    if modelo_veiculo:
+        data_filter["modelo"]= modelo_veiculo
+
+    if preco_veiculo:
+        data_filter["preco"]= preco_veiculo
+
+    if qtde_veiculo:
+        data_filter["qtde"] = qtde_veiculo
+
+    print(test)
+    return await File_manipulation().Filter_table(data_filter)
+
+
+@router.post("/db/insert_data")
+async def insert(marca_veiculo: str, modelo_veiculo: str, preco_veiculo: float, qtde_veiculo: int):
+    data_veiculo = dict(
+                Marca = marca_veiculo,
+                Modelo = modelo_veiculo,
+                Preco = preco_veiculo,
+                Qtde = qtde_veiculo
+                        )
     return await File_manipulation().insert_data(data_veiculo)
 
-@router.get("/db/delete_data")
-async def delete(marca_veiculo: str, modelo_veiculo: str):
+@router.delete("/db/delete_data")
+async def delete_data(marca_veiculo: str, modelo_veiculo: str):
 
     data_v= dict(marca= marca_veiculo,modelo = modelo_veiculo)
     return await File_manipulation().delete_data(data_v)
