@@ -1,4 +1,6 @@
 from fastapi import APIRouter, UploadFile, FastAPI, File
+
+
 from domain.file_processor import File_manipulation
 
 router = APIRouter()
@@ -19,22 +21,17 @@ async def list_all_data():
 
 
 @router.get("/db/filter_data")
-async def filter_all_data(marca_veiculo: str=None, modelo_veiculo: str = None, preco_veiculo: float= None, qtde_veiculo: int= None):
-    data_filter = {}
-
-    if marca_veiculo:
-        data_filter["marca"] = marca_veiculo
-
-    if modelo_veiculo:
-        data_filter["modelo"]= modelo_veiculo
-
-    if preco_veiculo:
-        data_filter["preco"]= preco_veiculo
-
-    if qtde_veiculo:
-        data_filter["qtde"] = qtde_veiculo
-
-    print(test)
+async def filter_all_data(marca_veiculo: str = None, modelo_veiculo: str = None, preco_veiculo: float = None, qtde_veiculo: int = None):
+    data_filter = {
+        k: v for k, v in {
+        "marca": marca_veiculo,
+        "modelo": modelo_veiculo,
+        "preco": preco_veiculo,
+        "qtde": qtde_veiculo,
+        }.items() 
+        if v is not None
+        }
+    print(data_filter)
     return await File_manipulation().Filter_table(data_filter)
 
 
@@ -51,5 +48,30 @@ async def insert(marca_veiculo: str, modelo_veiculo: str, preco_veiculo: float, 
 @router.delete("/db/delete_data")
 async def delete_data(marca_veiculo: str, modelo_veiculo: str):
 
-    data_v= dict(marca= marca_veiculo,modelo = modelo_veiculo)
+    data_v= {}
+    
+    if marca_veiculo:
+        data_v["marca"] = marca_veiculo
+        
+        
+    if modelo_veiculo:
+        data_v["modelo"] = modelo_veiculo
+    
     return await File_manipulation().delete_data(data_v)
+
+@router.post("/db/update")
+async def update(marca_veiculo: str, modelo_veiculo: str, new_marca_veiculo: str = None, new_modelo_veiculo: str = None,new_preco_veiculo: float = None, new_qtde_veiculo: int = None):
+    
+    
+    data_update = {
+        k: v for k, v in {
+            "new_marca": new_marca_veiculo,
+            "new_modelo": new_modelo_veiculo,
+            "new_preco": new_preco_veiculo,
+            "new_qtde": new_qtde_veiculo,
+            "marca": marca_veiculo,
+            "modelo": modelo_veiculo
+        }.items() 
+        if v is not None}
+
+    return await File_manipulation().update_data(data_update)

@@ -101,7 +101,7 @@ class File_manipulation:
             
             
     async def Filter_table(self, data: dict):
-        print(data)
+        
         sql_filter = """SELECT * FROM Carro"""
 
         condicoes = []
@@ -120,7 +120,7 @@ class File_manipulation:
             
         if condicoes:
             sql_filter += " WHERE "+" AND ".join(condicoes)
-        print(sql_filter)
+
         dado_filter = []
         try:
             self.cursor.execute(sql_filter, tuple(data.values()))
@@ -129,6 +129,7 @@ class File_manipulation:
             for item in dado:
                 content = dict(ID_veiculo = item[0], marca_veiculo = item[1], modelo_veiculo= item[2], preco_veiculo=item[3], qtde_veiculo = item[4])
                 dado_filter.append(content)
+                
             return {"data": dado_filter}
         except con.DatabaseError as e:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, 
@@ -155,10 +156,18 @@ class File_manipulation:
         
     async def delete_data(self, data: dict):
         sql_delete = """
-        DELETE FROM Carro 
-        WHERE Marca_veiculo = ? AND Modelo_carro = ?
+            DELETE FROM Carro 
         """
-
+        print(data)
+        condicoes = []
+        if ("marca" in data) and  (data["marca"] is not None):
+            condicoes.append("Marca_veiculo = ?")
+            
+        if ("modelo" in data) and  (data["modelo"] is not None):
+            condicoes.append("Modelo_carro = ?")
+            
+        if condicoes:
+            sql_delete += " WHERE " + " AND ".join(condicoes)
 
         try: 
             self.cursor.execute(sql_delete, tuple(data.values()))
@@ -168,3 +177,48 @@ class File_manipulation:
         except Exception as e:
             raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 detail=f'erro: {e}')
+            
+            
+    async def update_data(self, data: dict):
+        sql_update = """UPDATE Carro SET """
+        
+        mudancas = []
+        query = []
+                
+        if ("new_marca" in data) and (data["new_marca"] is not None):
+            mudancas.append("Marca_veiculo = ?")
+            
+        if ("new_modelo" in data) and  (data["new_modelo"] is not None):
+            mudancas.append("Modelo_carro = ?")
+            
+        if ("new_preco" in data) and (data["new_preco"] is not None):
+            mudancas.append("Preco_carro = ?")
+        
+        if ("new_qtde" in data) and (data["new_qtde"] is not None):
+            mudancas.append("Qtde_carro = ?")
+            
+            
+            # WHERE
+        if ("marca" in data) and (data["marca"] is not None):
+            query.append("Marca_veiculo = ?")
+        
+        if ("modelo" in data) and (data["modelo"] is not None):
+            query.append("Modelo_carro = ?")
+            
+            
+        if not mudancas:
+            return {"erro": "Nenhuna mudança para atualizar"}
+        
+        sql_update += ", ".join(mudancas)
+            
+        if query:
+            sql_update += " WHERE " + " AND ".join(query)
+        
+        try:
+            print(tuple(data.values()))
+            self.cursor.execute(sql_update, tuple(data.values()))
+            self.conexao.commit()
+            self.close_db()
+        except self.conexao.DatabaseError as e:
+            return {"ERROr": e}        
+        return {"message": "Dados Atualizadps com sucesso"}
