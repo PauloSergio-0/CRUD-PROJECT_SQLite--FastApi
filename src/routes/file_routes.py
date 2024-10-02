@@ -31,31 +31,29 @@ async def filter_all_data(marca_veiculo: str = None, modelo_veiculo: str = None,
         }.items() 
         if v is not None
         }
-    print(data_filter)
+
     return await File_manipulation().Filter_table(data_filter)
 
 
 @router.post("/db/insert_data")
 async def insert(marca_veiculo: str, modelo_veiculo: str, preco_veiculo: float, qtde_veiculo: int):
-    data_veiculo = dict(
-                Marca = marca_veiculo,
-                Modelo = modelo_veiculo,
-                Preco = preco_veiculo,
-                Qtde = qtde_veiculo
-                        )
+    
+    data_veiculo ={ 
+                "Marca" : marca_veiculo,
+                "Modelo": modelo_veiculo,
+                "Preco" : preco_veiculo,
+                "Qtde" : qtde_veiculo
+                        }
+    
     return await File_manipulation().insert_data(data_veiculo)
 
 @router.delete("/db/delete_data")
 async def delete_data(marca_veiculo: str, modelo_veiculo: str):
 
-    data_v= {}
-    
-    if marca_veiculo:
-        data_v["marca"] = marca_veiculo
-        
-        
-    if modelo_veiculo:
-        data_v["modelo"] = modelo_veiculo
+    data_v= {
+        "marca" : marca_veiculo,
+        "modelo": modelo_veiculo
+    }
     
     return await File_manipulation().delete_data(data_v)
 
@@ -71,7 +69,7 @@ async def update(marca_veiculo: str, modelo_veiculo: str, new_marca_veiculo: str
             "new_qtde": new_qtde_veiculo,
             "marca": marca_veiculo,
             "modelo": modelo_veiculo
-        }.items() 
-        if v is not None}
+            }.items() if v is not None
+        }
 
     return await File_manipulation().update_data(data_update)

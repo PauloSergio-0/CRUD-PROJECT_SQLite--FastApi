@@ -158,8 +158,9 @@ class File_manipulation:
         sql_delete = """
             DELETE FROM Carro 
         """
-        print(data)
+
         condicoes = []
+        print(data)
         if ("marca" in data) and  (data["marca"] is not None):
             condicoes.append("Marca_veiculo = ?")
             
@@ -182,43 +183,44 @@ class File_manipulation:
     async def update_data(self, data: dict):
         sql_update = """UPDATE Carro SET """
         
-        mudancas = []
+        atualizacoes = []
         query = []
+            
+        campos_update = {
+            "new_marca": "Marca_veiculo",
+            "new_modelo": "Modelo_carro",
+            "new_preco": "Preco_carro",
+            "new_qtde":"Qtde_carro"
+        }
+        
+        campos_where = {
+            "marca": "Marca_veiculo",
+            "modelo": "Modelo_carro"
+        }
+        
+        for k, v in campos_update.items():
+            if k in data and data[k] is not None:
+                atualizacoes.append(f"{v} = ?")
                 
-        if ("new_marca" in data) and (data["new_marca"] is not None):
-            mudancas.append("Marca_veiculo = ?")
-            
-        if ("new_modelo" in data) and  (data["new_modelo"] is not None):
-            mudancas.append("Modelo_carro = ?")
-            
-        if ("new_preco" in data) and (data["new_preco"] is not None):
-            mudancas.append("Preco_carro = ?")
+        for k , v in campos_where.items():
+            if k in data and data[k] is not None:
+                query.append(f"{v} = ?")
+                
+        if not atualizacoes:
+            return {"Error": "erro em atualizações"}
+        else:
+            sql_update += ", ".join(atualizacoes)
         
-        if ("new_qtde" in data) and (data["new_qtde"] is not None):
-            mudancas.append("Qtde_carro = ?")
-            
-            
-            # WHERE
-        if ("marca" in data) and (data["marca"] is not None):
-            query.append("Marca_veiculo = ?")
-        
-        if ("modelo" in data) and (data["modelo"] is not None):
-            query.append("Modelo_carro = ?")
-            
-            
-        if not mudancas:
-            return {"erro": "Nenhuna mudança para atualizar"}
-        
-        sql_update += ", ".join(mudancas)
-            
-        if query:
+        if not query:
+            return {"Error": "erro em query"}
+        else:
             sql_update += " WHERE " + " AND ".join(query)
-        
+
         try:
-            print(tuple(data.values()))
             self.cursor.execute(sql_update, tuple(data.values()))
             self.conexao.commit()
             self.close_db()
+
         except self.conexao.DatabaseError as e:
             return {"ERROr": e}        
-        return {"message": "Dados Atualizadps com sucesso"}
+        return {"message": "Dados Atualizados com sucesso"}
